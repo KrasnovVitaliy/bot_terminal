@@ -8,9 +8,11 @@ import 'package:pod_terminal/data/external_api/bot_api_client.dart';
 void main() {
   final botProvider = BotProvider();
   final botApiClient = BotApiClient(
-    onConnectionStateChanged: ({bool? state}) =>
-        botProvider.setBotApiConnectionState(state ?? false),
+    onConnectionStateChanged: ({bool? state}) => botProvider.setBotApiConnectionState(state ?? false),
+    onLogMessage: ({required String message, required String logType}) =>
+        botProvider.addLog(message: message, logType: logType),
   );
+
   runApp(
     MultiProvider(
       providers: [ChangeNotifierProvider.value(value: botProvider)],

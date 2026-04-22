@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pod_terminal/constants.dart';
+import 'package:pod_terminal/data/external_api/bot_api_client.dart';
 import 'package:pod_terminal/presentation/widgets/commands.dart';
 import 'package:pod_terminal/presentation/widgets/servos_control.dart';
 import 'package:pod_terminal/presentation/widgets/servos_indicator.dart';
 import 'package:pod_terminal/presentation/widgets/terminal_control.dart';
-import 'package:pod_terminal/data/external_api/bot_api_client.dart';
+import 'package:pod_terminal/presentation/widgets/logs.dart';
 
 class MainScreen extends StatefulWidget {
   final BotApiClient botApiClient;
@@ -124,6 +125,11 @@ class _MainScreenState extends State<MainScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [SizedBox(height: 120, width: 1108, child: CommandsWidget(botApiClient: widget.botApiClient))],
+            ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [SizedBox(height: 500, width: 1108, child: LogsWidget(title: "Logs"))],
             ),
           ],
         ),

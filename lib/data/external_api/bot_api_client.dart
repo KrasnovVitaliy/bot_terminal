@@ -2,20 +2,29 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:pod_terminal/domain/commands.dart';
+import 'package:pod_terminal/constants.dart';
 
 class BotApiClient {
   String host;
   int port;
   Socket? socket;
   Function({bool state}) onConnectionStateChanged;
+  Function({required String message, required String logType}) onLogMessage;
+
   Timer? _throttleTimer;
 
-  BotApiClient({required this.onConnectionStateChanged, this.host = "127.0.0.1", this.port = 5566});
+  BotApiClient({
+    required this.onConnectionStateChanged,
+    required this.onLogMessage,
+    this.host = "127.0.0.1",
+    this.port = 5566,
+  });
 
   Future<void> connect() async {
     try {
       final s = await Socket.connect(host, port);
       onConnectionStateChanged(state: true);
+      onLogMessage(message: "Connected to server: $host:$port", logType: logTypeInfo);
       socket = s;
 
       socket!.listen(
@@ -34,11 +43,13 @@ class BotApiClient {
         onError: (e) {
           socket = null;
           onConnectionStateChanged(state: false);
+          onLogMessage(message: e.toString(), logType: logTypeError);
         },
       );
     } catch (e) {
       socket = null;
       onConnectionStateChanged(state: false);
+      onLogMessage(message: e.toString(), logType: logTypeError);
       rethrow;
     }
   }
@@ -47,6 +58,7 @@ class BotApiClient {
     await socket?.close();
     socket = null;
     onConnectionStateChanged(state: false);
+    onLogMessage(message: "Disconnected from server", logType: logTypeInfo);
   }
 
   Future<void> sendCommand(String cmd) async {
